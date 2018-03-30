@@ -16,6 +16,9 @@
  * 
  * https://github.com/kyuhyong/arduino_beacon
  */
+const int motor1Pin = 3;
+int motorTimer = 0;
+int motorSet = 0;
 
 const int beaconPin = 13;
 int beaconTimer[4] = {2000, 100, 2000, 100};//Timing sequence each OFF-ON-OFF-ON
@@ -49,6 +52,12 @@ void strobeSet() {
 }
 
 ISR(TIMER0_COMPA_vect){//timer0 interrupt 1kHz
+  if(motorTimer++>1000)
+  {
+    motorTimer = 0;
+    if(motorSet == 1) motorSet = 0;
+    else motorSet = 1;
+  }
   switch(beaconState)
   {
     case 0:   //Standby state
@@ -133,6 +142,7 @@ ISR(TIMER0_COMPA_vect){//timer0 interrupt 1kHz
 
 void setup() {
   // put your setup code here, to run once:
+  pinMode(motor1Pin, OUTPUT);
   pinMode(13, OUTPUT);
   //set timer0 interrupt at 2kHz
   TCCR0A = 0;// set entire TCCR2A register to 0
@@ -155,5 +165,9 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  
+  if(motorSet == 1)
+  {
+    analogWrite(motor1Pin, 20);
+  }
+  else analogWrite(motor1Pin, 0);
 }

@@ -22,7 +22,7 @@
  * - Pin 9(timer 1): Motor Output controlled by timer 1
  * - Pin 10(timer 1): Landing light
  * - Pin 11(timer 2): Nav light
- * - Pin 3(timer 2): Interrior light
+ * - Pin 3(timer 2): Interior light
  * Digital Output pins:
  * - Pin 4: Battery monitor trigger
  * - Pin 7: Strobe light
@@ -52,8 +52,8 @@ const int navPWM_Pin = 11;
 unsigned int navSet = false;
 #define NAV_LIGHT_PWM  180
 
-const int interriorPWM_Pin = 3;
-unsigned int interriorSet = false;
+const int interiorPWM_Pin = 3;
+unsigned int interiorSet = false;
 #define INTERRIOR_LIGHT_PWM  10
 
 const int beaconPin = 8;
@@ -142,15 +142,15 @@ void NavReset() {
   Serial.println("NAV_RESET");
   analogWrite(navPWM_Pin, 0);
 }
-void InterriorSet() {
-  interriorSet = true;
+void InteriorSet() {
+  interiorSet = true;
   Serial.println("INT_SET");
-  analogWrite(interriorPWM_Pin, INTERRIOR_LIGHT_PWM);
+  analogWrite(interiorPWM_Pin, INTERRIOR_LIGHT_PWM);
 }
-void InterriorReset() {
-  interriorSet = false;
+void InteriorReset() {
+  interiorSet = false;
   Serial.println("INT_RESET");
-  analogWrite(interriorPWM_Pin, 0);
+  analogWrite(interiorPWM_Pin, 0);
 }
 void SystemReset(){
     flg_buttonLong = 0;
@@ -159,7 +159,7 @@ void SystemReset(){
     StrobeReset();
     MotorReset();
     NavReset();
-    InterriorReset();
+    InteriorReset();
     LandingReset();
 }
 ISR(TIMER0_COMPA_vect){//timer0 interrupt 1kHz
@@ -284,7 +284,7 @@ void setup() {
   pinMode(motorPWM_Pin, OUTPUT);
   pinMode(landingPWM_Pin, OUTPUT);
   pinMode(navPWM_Pin, OUTPUT);
-  pinMode(interriorPWM_Pin, OUTPUT);
+  pinMode(interiorPWM_Pin, OUTPUT);
   pinMode(beaconPin, OUTPUT);
   pinMode(strobePin, OUTPUT);
   pinMode(batMonTriggerPin, OUTPUT);
@@ -363,7 +363,7 @@ void loop() {
   }
   switch(process_state)
   {
-    case 0:
+    case 0: //For beacon light control
       if(flg_buttonLong == 1)
       {
         Serial.println(beaconSet);
@@ -376,7 +376,7 @@ void loop() {
         flg_buttonLong = 0;
       }
       break;
-    case 1:
+    case 1: //For strobe light control
       if(flg_buttonLong == 1)
       {
         if(strobeSet != 1) {
@@ -388,7 +388,7 @@ void loop() {
         flg_buttonLong = 0;
       }
       break;
-    case 2:
+    case 2: //For Nav light control
       if(flg_buttonLong == 1)
       {
         if(navSet != 1) {
@@ -400,7 +400,7 @@ void loop() {
         flg_buttonLong = 0;
       }
       break;
-    case 3:
+    case 3: //For Motor output control
       if(flg_buttonLong == 1)
       {
         if(motorSet != 1) {
@@ -412,7 +412,7 @@ void loop() {
         flg_buttonLong = 0;
       }
       break;
-    case 4:
+    case 4: //For landing light control
       if(flg_buttonLong == 1)
       {
         if(landingSet != 1) {
@@ -424,14 +424,14 @@ void loop() {
         flg_buttonLong = 0;
       }
       break;
-    case 5:
+    case 5: //For interior light control
       if(flg_buttonLong == 1)
       {
-        if(interriorSet != 1) {
-          InterriorSet();
+        if(interiorSet != 1) {
+          InteriorSet();
         }
         else {
-          InterriorReset();
+          InteriorReset();
         }
         flg_buttonLong = 0;
       }
